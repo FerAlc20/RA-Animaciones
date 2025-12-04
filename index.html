@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <title>AR Ara - Animaciones</title>
+    <title>AR Ara - Profesional</title>
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <meta charset="utf-8">
     
@@ -10,65 +10,101 @@
     
     <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
 
-    <script src="script.js?v=60"></script>
+    <script src="script.js?v=70"></script>
 
     <style>
-        body { margin: 0; overflow: hidden; font-family: 'Segoe UI', sans-serif; }
+        body { margin: 0; overflow: hidden; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #0a0a0a; }
 
-        /* Estilo Header */
+
+        /* HEADER ELEGANTE */
         .header {
             position: absolute; top: 0; left: 0; width: 100%;
-            background-color: rgba(0, 0, 0, 0.7); color: white;
-            padding: 15px 0; text-align: center; z-index: 10;
-            backdrop-filter: blur(5px);
+            /* Degradado oscuro y translúcido */
+            background: linear-gradient(to right, rgba(10, 10, 20, 0.8), rgba(30, 20, 60, 0.8));
+            color: white; padding: 20px 0; text-align: center; z-index: 10;
+            /* Efecto de vidrio borroso */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
-        .header h1 { margin: 0; font-size: 16px; font-weight: 600; text-transform: uppercase; }
+        .header h1 { margin: 0; font-size: 14px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
 
-        /* Panel de Botones Inmersivos */
+        /* CONTENEDOR DE BOTONES */
         .control-panel {
-            position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%);
-            width: 95%; display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; z-index: 20;
+            position: absolute; bottom: 90px; left: 50%; transform: translateX(-50%);
+            width: 95%; display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; z-index: 20;
         }
 
+        /* BOTONES INMERSIVOS (MORADO/AZUL) */
         .anim-btn {
-            background-color: rgba(20, 20, 20, 0.8);
-            border: 1px solid #00e676;
-            color: #00e676; padding: 10px 14px; border-radius: 20px;
-            font-size: 12px; cursor: pointer; backdrop-filter: blur(4px);
-            transition: all 0.2s; text-transform: uppercase; font-weight: bold;
+            /* Fondo degradado Morado -> Azul Marino semi-transparente */
+            background: linear-gradient(135deg, rgba(106, 17, 203, 0.6), rgba(37, 117, 252, 0.6));
+            /* Borde brillante sutil */
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            /* Sombra suave para profundidad */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 12px 18px;
+            border-radius: 25px; /* Bordes muy redondeados */
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            /* Efecto vidrio */
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
+
+        /* Estado al presionar o seleccionar */
         .anim-btn:active, .anim-btn.selected {
-            background-color: #00e676; color: black; transform: scale(0.95);
+            /* Se vuelve más brillante y sólido */
+            background: linear-gradient(135deg, rgba(106, 17, 203, 0.9), rgba(37, 117, 252, 0.9));
+            border-color: rgba(255, 255, 255, 0.8);
+            transform: translateY(2px) scale(0.98); /* Pequeño efecto de hundirse */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
         }
 
-        /* Botón de Captura */
+        /* BOTÓN DE CAPTURA */
         #snap-button {
-            position: absolute; top: 15px; right: 15px;
-            background-color: rgba(255, 255, 255, 0.2);
-            border: none; padding: 10px; border-radius: 50%;
-            color: white; z-index: 20; cursor: pointer; font-size: 20px;
+            position: absolute; top: 20px; right: 20px;
+            /* Mismo estilo de vidrio */
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 12px; border-radius: 50%;
+            color: white; z-index: 20; cursor: pointer; font-size: 22px;
+            backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: all 0.2s;
         }
+        #snap-button:active { transform: scale(0.9); background: rgba(255, 255, 255, 0.3); }
 
-        /* Cargando... */
+        /* LOADER */
         #loader {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.8); color: white; padding: 20px; border-radius: 10px;
+            background: rgba(20, 20, 40, 0.9); color: white; padding: 25px; border-radius: 15px;
             z-index: 999; display: flex; flex-direction: column; align-items: center;
+            border: 1px solid rgba(106, 17, 203, 0.5);
+            backdrop-filter: blur(10px); font-weight: 500;
         }
 
+        /* FOOTER */
         .footer {
             position: absolute; bottom: 0; left: 0; width: 100%;
-            background-color: #1a1a1a; color: #888;
-            padding: 5px 0; text-align: center; z-index: 10;
-            border-top: 2px solid #00e676; font-size: 10px;
+            background: linear-gradient(to right, #0f0c29, #302b63, #24243e); /* Degradado oscuro profesional */
+            color: rgba(255, 255, 255, 0.6);
+            padding: 8px 0; text-align: center; z-index: 10;
+            border-top: 1px solid rgba(255, 255, 255, 0.1); font-size: 11px; letter-spacing: 1px;
         }
     </style>
 </head>
 
 <body>
-    <div class="header"><h1>Ara: Control de Movimiento</h1></div>
+    <div class="header"><h1>Ara: Experiencia Inmersiva</h1></div>
     
-    <div id="loader"><span>Cargando Animaciones...</span></div>
+    <div id="loader"><span>Cargando Experiencia AR...</span></div>
 
     <button id="snap-button" title="Tomar Foto">📸</button>
 
@@ -84,7 +120,7 @@
         vr-mode-ui="enabled: false"
         gesture-detector
         screenshot-handler
-        renderer="logarithmicDepthBuffer: true; colorManagement: true;"
+        renderer="logarithmicDepthBuffer: true; colorManagement: true;antialias: true;"
         id="scene">
         
         <a-marker 
@@ -97,7 +133,7 @@
                 id="modelo-ara"
                 position="0 0 0" 
                 rotation="-90 0 0"
-                scale="0.005 0.005 0.005" 
+                scale="0.1 0.1 0.1" 
                 class="clickable"
                 gesture-handler
                 gltf-model="url(ara.glb)"
@@ -109,6 +145,6 @@
         <a-entity camera></a-entity>
     </a-scene>
 
-    <div class="footer"><p>&copy; 2025 Fernanda Alcántara | Proyecto WebXR</p></div>
+    <div class="footer"><p>Desarrollado por Fernanda Alcántara | AR WebXR 2025</p></div>
 </body>
 </html>
