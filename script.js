@@ -1,89 +1,52 @@
-/* script.js */
-
-// ==========================================
-// 1. CARGADOR DE ANIMACIONES (Multiclip)
-// ==========================================
 AFRAME.registerComponent('animation-loader', {
     init: function () {
-        this.model = null;
-        this.mixer = null;
-        this.actions = {}; 
-        
-        // Al cargar el modelo base (ara)
+        this.model = null; this.mixer = null; this.actions = {}; 
         this.el.addEventListener('model-loaded', (e) => {
             const mesh = this.el.getObject3D('mesh');
             if (!mesh) return;
-            
             this.model = mesh;
             this.mixer = new THREE.AnimationMixer(this.model);
             console.log("Modelo Ara cargado. Iniciando carga de rutinas...");
             this.loadExtraAnimations();
         });
-
-        this.tick = (t, dt) => {
-            if (this.mixer) this.mixer.update(dt / 1000);
-        };
+        this.tick = (t, dt) => { if (this.mixer) this.mixer.update(dt / 1000); };
     },
-
     loadExtraAnimations: function () {
         const buttons = document.querySelectorAll('.anim-btn');
         const loader = new THREE.GLTFLoader();
         let loadedCount = 0;
         const totalToLoad = buttons.length;
         const loadingScreen = document.getElementById('loader');
-
         buttons.forEach(btn => {
-            // encodeURI maneja los espacios en nombres como "Twist Dance.glb"
-            const rawFileName = btn.getAttribute('data-file');
-            const fileName = encodeURI(rawFileName); 
+            const fileName = encodeURI(btn.getAttribute('data-file')); 
             const animName = btn.getAttribute('data-name');
-
             loader.load(fileName, (gltf) => {
-                const clip = gltf.animations[0]; // Tomamos la animación
+                const clip = gltf.animations[0];
                 if (clip) {
-                    clip.name = animName; // Renombramos
+                    clip.name = animName;
                     const action = this.mixer.clipAction(clip);
                     this.actions[animName] = action;
                 }
-
-                btn.addEventListener('click', () => {
-                    this.playAnimation(animName, btn);
-                });
-
+                btn.addEventListener('click', () => { this.playAnimation(animName, btn); });
                 loadedCount++;
                 if(loadedCount === totalToLoad) {
                     if(loadingScreen) loadingScreen.style.display = 'none';
                     console.log("¡Todas las animaciones listas!");
                 }
-            }, undefined, (error) => {
-                console.error("Error cargando:", fileName, error);
-            });
+            }, undefined, (error) => { console.error("Error cargando:", fileName, error); });
         });
     },
-
     playAnimation: function (name, btnElement) {
         if (!this.mixer || !this.actions[name]) return;
-
-        // Efecto visual en botones
         document.querySelectorAll('.anim-btn').forEach(b => b.classList.remove('selected'));
         btnElement.classList.add('selected');
-
-        // Transición suave (Crossfade)
-        for (const key in this.actions) {
-            if (key !== name) {
-                this.actions[key].fadeOut(0.5);
-            }
-        }
+        for (const key in this.actions) { if (key !== name) { this.actions[key].fadeOut(0.5); } }
         const newAction = this.actions[name];
-        newAction.reset();
-        newAction.fadeIn(0.5);
-        newAction.play();
+        newAction.reset(); newAction.fadeIn(0.5); newAction.play();
     }
 });
 
-// ==========================================
-// 2. GESTOS (Mover y Escalar)
-// ==========================================
+// 2. GESTOS (Mover y Escalar) 
 AFRAME.registerComponent("gesture-detector", {
     schema: { element: { default: "" } },
     init: function() {
@@ -151,8 +114,9 @@ AFRAME.registerComponent("gesture-detector", {
     }
 });
 
+
 AFRAME.registerComponent("gesture-handler", {
-    schema: { enabled: { default: true }, rotationFactor: { default: 5 }, minScale: { default: 0.002 }, maxScale: { default: 0.1 } },
+    schema: { enabled: { default: true }, rotationFactor: { default: 5 }, minScale: { default: 0.02 }, maxScale: { default: 0.5 } },
     init: function() {
         this.handleScale = this.handleScale.bind(this);
         this.handleRotation = this.handleRotation.bind(this);
@@ -195,9 +159,7 @@ AFRAME.registerComponent("gesture-handler", {
     }
 });
 
-// ==========================================
-// 3. CAPTURA DE PANTALLA
-// ==========================================
+
 AFRAME.registerComponent("screenshot-handler", {
     init: function() {
         const button = document.getElementById('snap-button');
@@ -213,8 +175,6 @@ AFRAME.registerComponent("screenshot-handler", {
             mergedCanvas.width = canvas.width;
             mergedCanvas.height = canvas.height;
             const ctx = mergedCanvas.getContext('2d');
-            
-            // Ajuste de relación de aspecto video/canvas
             const videoAspect = video.videoWidth / video.videoHeight;
             const canvasAspect = canvas.width / canvas.height;
             let drawWidth, drawHeight, startX, startY;
@@ -227,23 +187,18 @@ AFRAME.registerComponent("screenshot-handler", {
             }
             ctx.drawImage(video, startX, startY, drawWidth, drawHeight);
             ctx.drawImage(canvas, 0, 0);
-
-            // Marca de agua
-            ctx.font = "15px Segoe UI";
-            ctx.fillStyle = "white";
-            ctx.shadowColor="black"; ctx.shadowBlur=4;
-            ctx.fillText("Ara AR WebXR", 20, canvas.height - 30);
-
+            // Fuente más profesional para la marca de agua
+            ctx.font = "bold 16px 'Segoe UI', Roboto, sans-serif";
+            ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+            ctx.fillText("Fernanda Alcántara | AR Experience", 20, canvas.height - 30);
             const link = document.createElement('a');
             link.download = `ara-ar-${Date.now()}.png`;
             link.href = mergedCanvas.toDataURL('image/png');
             link.click();
-            
             const btn = document.getElementById('snap-button');
             const originalText = btn.innerHTML;
             btn.innerHTML = "✅";
             setTimeout(() => { btn.innerHTML = originalText; }, 1500);
-
         } catch (e) { console.error(e); }
     }
 });
