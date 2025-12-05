@@ -1,3 +1,4 @@
+
 AFRAME.registerComponent('animation-loader', {
     init: function () {
         this.model = null; this.mixer = null; this.actions = {}; 
@@ -29,10 +30,17 @@ AFRAME.registerComponent('animation-loader', {
                 }
                 btn.addEventListener('click', () => { this.playAnimation(animName, btn); });
                 loadedCount++;
+                
                 if(loadedCount === totalToLoad) {
                     if(loadingScreen) loadingScreen.style.display = 'none';
-                    console.log("¡Todas las animaciones listas!");
+                    console.log("¡Todas las animaciones listas! Iniciando por defecto...");
+                    // Hacemos click automático en el primer botón
+                    if(buttons[0]) {
+                        buttons[0].click();
+                    }
                 }
+                // ==================================================
+                
             }, undefined, (error) => { console.error("Error cargando:", fileName, error); });
         });
     },
@@ -46,7 +54,6 @@ AFRAME.registerComponent('animation-loader', {
     }
 });
 
-// 2. GESTOS (Mover y Escalar) 
 AFRAME.registerComponent("gesture-detector", {
     schema: { element: { default: "" } },
     init: function() {
@@ -114,7 +121,6 @@ AFRAME.registerComponent("gesture-detector", {
     }
 });
 
-
 AFRAME.registerComponent("gesture-handler", {
     schema: { enabled: { default: true }, rotationFactor: { default: 5 }, minScale: { default: 0.02 }, maxScale: { default: 0.5 } },
     init: function() {
@@ -159,7 +165,6 @@ AFRAME.registerComponent("gesture-handler", {
     }
 });
 
-
 AFRAME.registerComponent("screenshot-handler", {
     init: function() {
         const button = document.getElementById('snap-button');
@@ -187,7 +192,6 @@ AFRAME.registerComponent("screenshot-handler", {
             }
             ctx.drawImage(video, startX, startY, drawWidth, drawHeight);
             ctx.drawImage(canvas, 0, 0);
-            // Fuente más profesional para la marca de agua
             ctx.font = "bold 16px 'Segoe UI', Roboto, sans-serif";
             ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
             ctx.fillText("Fernanda Alcántara | AR Experience", 20, canvas.height - 30);
